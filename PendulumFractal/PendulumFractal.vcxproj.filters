@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{db9ff32a-93cf-4526-bec1-4ac678cbc635}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\main">
+      <UniqueIdentifier>{c525ce0a-250d-44c2-b2ef-c5e472b2a9bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\simulator">
+      <UniqueIdentifier>{199d59a6-7b7c-47a2-a1d6-3db2c8c89594}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{4a8ed796-8908-41e0-a5bb-718d40029930}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\simulator\shaders">
+      <UniqueIdentifier>{081497a1-dde6-4c89-8575-36acdb5dfd2c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\main\main.cpp">
+      <Filter>src\main</Filter>
+    </ClCompile>
+    <ClCompile Include="glad.c">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\simulator\FractalSection.cpp">
+      <Filter>src\simulator</Filter>
+    </ClCompile>
+    <ClCompile Include="src\simulator\Shader.cpp">
+      <Filter>src\simulator</Filter>
+    </ClCompile>
+    <ClCompile Include="src\simulator\Fractal.cpp">
+      <Filter>src\simulator</Filter>
+    </ClCompile>
+    <ClCompile Include="src\simulator\GpuInterface.cpp">
+      <Filter>src\simulator</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="glad.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="khrplatform.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simulator\FractalSection.h">
+      <Filter>src\simulator</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simulator\Shader.h">
+      <Filter>src\simulator</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simulator\Fractal.h">
+      <Filter>src\simulator</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simulator\GpuInterface.h">
+      <Filter>src\simulator</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\simulator\shaders\default-vertex.glsl">
+      <Filter>src\simulator\shaders</Filter>
+    </None>
+    <None Include="src\simulator\shaders\flipFractal-fragment.glsl">
+      <Filter>src\simulator\shaders</Filter>
+    </None>
+  </ItemGroup>
+</Project>
