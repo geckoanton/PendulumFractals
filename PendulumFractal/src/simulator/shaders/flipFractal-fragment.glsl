@@ -1,115 +1,85 @@
+
 #version 430 core
 
+out vec4 fragColor;
 in vec2 coordinate;
 
-out vec4 fragColor;
+uniform float m1, m2;
+uniform float l1, l2;
+uniform float g;
 
-float m1 = 1;
-float m2 = 1;
-float l1 = 1;
-float l2 = 1;
-float g = 9.82;
+const double PI = 3.1415926535897932384626433832795028841971693993751058209749445923078164062lf;
 
-float A1() {
-	return (m1 + m2) * l1;
-}
-float B1(float a, float b) {
-	return m2 * l2 * cos(a - b);
-}
-float C1(float a, float b, float da, float db) {
-	return -(db * db * l2 * m2 * sin(a - b)) - (g * (m1 + m2)) * sin(a);
-}
+// TODO: IMPLEMENT DOUBLE PRECISION TRIGONOMETRIC OPERATIONS!!!
 
-float A2(float a, float b) {
-	return m2 * l1 * cos(a - b);
+double A1() {
+	return (double(m1) + double(m2)) * double(l1);
 }
-float B2() {
-	return m2 * l2;
+double B1(double a, double b) {
+	return double(m2) * double(l2) * cos(float(a - b));
 }
-float C2(float a, float b, float da, float db) {
-	return (da * da * l1 * m2 * sin(a - b)) - (g * m2) * sin(b);
+double C1(double a, double b, double da, double db) {
+	return -(db * db * double(l2) * double(m2) * sin(float(a - b))) - (double(g) * (double(m1) + double(m2))) * sin(float(a));
 }
 
-vec4 getStateChange(vec4 state) {
-	float a1 = A1();
-	float b1 = B1(state.x, state.y);
-	float c1 = C1(state.x, state.y, state.z, state.w);
-
-	float a2 = A2(state.x, state.y);
-	float b2 = B2();
-	float c2 = C2(state.x, state.y, state.z, state.w);
-
-	float ddb = (a2 * c1 - a1 * c2) / (a2 * b1 - a1 * b2);
-	float dda = (c1 - b1 * ddb) / a1;
-
-	return vec4(state.z, state.w, dda, ddb);
+double A2(double a, double b) {
+	return double(m2) * double(l1) * cos(float(a - b));
+}
+double B2() {
+	return double(m2) * double(l2);
+}
+double C2(double a, double b, double da, double db) {
+	return (da * da * double(l1) * double(m2) * sin(float(a - b))) - (double(g) * double(m2)) * sin(float(b));
 }
 
-vec4 iterateSnapshot(vec4 state, float dt) {
-	vec4 k1 = getStateChange(state);
-	vec4 k2 = getStateChange(state + (k1 * (dt / 2)));
-	vec4 k3 = getStateChange(state + (k2 * (dt / 2)));
-	vec4 k4 = getStateChange(state + (k3 * (dt)));
-	
-	vec4 stateChange = (k1 + (k2 * 2) + (k3 * 2) + (k4)) * (dt / 6);
+dvec4 getStateChange(dvec4 state) {
+	double a1 = A1();
+	double b1 = B1(state.x, state.y);
+	double c1 = C1(state.x, state.y, state.z, state.w);
 
-	float a = mod(mod(state.x + stateChange.x, 6.28318530718) + 6.28318530718, 6.28318530718);
-	float b = mod(mod(state.y + stateChange.y, 6.28318530718) + 6.28318530718, 6.28318530718);
-	float da = state.z + stateChange.z;
-	float db = state.w + stateChange.w;
+	double a2 = A2(state.x, state.y);
+	double b2 = B2();
+	double c2 = C2(state.x, state.y, state.z, state.w);
 
-	return vec4(a, b, da, db);
+	double ddb = (a2 * c1 - a1 * c2) / (a2 * b1 - a1 * b2);
+	double dda = (c1 - b1 * ddb) / a1;
+
+	return dvec4(state.z, state.w, dda, ddb);
+}
+
+dvec4 iterateSnapshot(dvec4 state, double dt) {
+	dvec4 k1 = getStateChange(state);
+	dvec4 k2 = getStateChange(state + (k1 * (dt / 2)));
+	dvec4 k3 = getStateChange(state + (k2 * (dt / 2)));
+	dvec4 k4 = getStateChange(state + (k3 * (dt)));
+
+	dvec4 stateChange = (k1 + (k2 * 2) + (k3 * 2) + (k4)) * (dt / 6);
+
+	double a = mod(mod(state.x + stateChange.x, 2.0lf * PI) + 2.0lf * PI, 2.0lf * PI);
+	double b = mod(mod(state.y + stateChange.y, 2.0lf * PI) + 2.0lf * PI, 2.0lf * PI);
+	double da = state.z + stateChange.z;
+	double db = state.w + stateChange.w;
+
+	return dvec4(a, b, da, db);
 }
 
 void main() {
-	vec4 state = vec4(((coordinate.x + 1) / 2) * 6.28318530718 - 3.14159265, ((-coordinate.y + 1) / 2) * 6.28318530718 - 3.14159265, 0, 0);
-	
-	state = iterateSnapshot(state, 0.01);
-	
+	dvec4 state = dvec4(coordinate.x * (2.0lf * PI) - PI, coordinate.y * (2.0lf * PI) - PI, 0, 0);
+
+	state = iterateSnapshot(state, 0.01lf);
+
 	vec3 color = vec3(0, 0, 0);
-	float count = 0;
-	
+
 	for(int i = 0; i < 1000; i++) {
-		//float prevB = state.y;
-		state = iterateSnapshot(state, 0.01);
-		/*float currentB = state.y;
-		
-		if ((currentB < 3.14159265 && prevB > 3.14159265 && currentB < 5 && prevB < 5) || (currentB > 3.14159265 && prevB < 3.14159265 && currentB < 5 && prevB < 5)) {
-			//count++;
+		double prevB = state.y;
+		state = iterateSnapshot(state, 0.01lf);
+		double currentB = state.y;
+
+		if ((currentB < PI && prevB > PI && currentB < 5 && prevB < 5) || (currentB > PI && prevB < PI && currentB < 5 && prevB < 5)) {
 			color = vec3(1, 1, 1);
-		}*/
+			break;
+		}
 	}
-	
-	/*if(count >= 7) {
-		color = vec3(1, 1, 1);
-	}
-	else if(count >= 6) {
-		color = vec3(0, 1, 1);
-	}
-	else if(count >= 5) {
-		color = vec3(1, 0, 1);
-	}
-	else if(count >= 4) {
-		color = vec3(1, 1, 0);
-	}
-	else if(count >= 3) {
-		color = vec3(0, 0, 1);
-	}
-	else if(count >= 2) {
-		color = vec3(0, 1, 0);
-	}
-	else if(count >= 1) {
-		color = vec3(1, 0, 0);
-	}
-	else if(count >= 0) {
-		color = vec3(0, 0, 0);
-	}*/
-	
-	float xxx = -(l1 * sin(state.x)) - (l2 * sin(state.y));
-	if(xxx < 0)
-		color = vec3(0, 0, 0);
-	if(xxx >= 0)
-		color = vec3(1, 1, 1);
-	
+
 	fragColor = vec4(color, 1.0);
 }

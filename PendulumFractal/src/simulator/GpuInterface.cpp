@@ -16,8 +16,9 @@ int GpuInterface::init() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);	// setting up glfw to use core-profile (access to a smaller set of openGL functions)
 	// creating a glfw window with the corresponding width, height and title (NOT USED)
-	window = glfwCreateWindow(256, 256, "", nullptr, nullptr);
-	glfwSetWindowPos(window, 0, 0);
+	window = glfwCreateWindow(1, 1, "", nullptr, nullptr);
+	glfwSetWindowPos(window, -1000, -1000);
+	glfwHideWindow(window);
 	if (window == NULL) {
 		std::cout << "Failed to create GLFW window." << std::endl;
 		glfwTerminate();
@@ -32,8 +33,6 @@ int GpuInterface::init() {
 	}
 	
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);	// set appropriate blend function (when transparency is used)
-
-	//glfwHideWindow(window);	// TODO if things dont works, dont hide window
 
 	// VAO
 	glGenVertexArrays(1, &fractalVAO);

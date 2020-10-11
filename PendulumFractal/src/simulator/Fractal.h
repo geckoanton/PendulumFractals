@@ -8,13 +8,13 @@ namespace FractalData {
 	};
 
 	struct Section {
-		double cornerX, cornerY;
-		double spanX, spanY;
+		float cornerX, cornerY;
+		float spanX, spanY;
 	};
 	struct InitialCondition {
-		double m1, m2;
-		double l1, l2;
-		double g;
+		float m1, m2;
+		float l1, l2;
+		float g;
 	};
 };
 
@@ -22,8 +22,11 @@ class Fractal {
 public:
 	Fractal(int resolution, int shaderType, FractalData::InitialCondition ic);
 
-private:
-	const int MAX_FRACTAL_SECTION_SIDE = 256;
+	unsigned long long countBoxes(char boxType);
 
+private:
 	static bool gpuInterfaceInited;
+	int resolution, shaderType;
+	int shaderSectionCount, lastShaderSectionSize;
+	FractalData::InitialCondition ic;
 };
