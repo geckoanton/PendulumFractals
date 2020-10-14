@@ -13,7 +13,7 @@ GLFWwindow* GpuInterface::window = nullptr;
 int GpuInterface::init() {
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);	// set opengl version to 4.3
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);	// setting up glfw to use core-profile (access to a smaller set of openGL functions)
 	// creating a glfw window with the corresponding width, height and title (NOT USED)
 	window = glfwCreateWindow(1, 1, "", nullptr, nullptr);

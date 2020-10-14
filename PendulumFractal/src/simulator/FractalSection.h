@@ -15,14 +15,21 @@ public:
 	FractalSection(Shader* shader, int width, int height, FractalData::Section* s, FractalData::InitialCondition* ic);
 	~FractalSection();
 
-	char* get();
-	int size();
+	unsigned char* getBuffer();
+
+	int getSize();
+	int getWidth();
+	int getHeight();
 
 private:
+	const double MAX_FBO_WAIT = 10.0;
+
+	static bool gpuInterfaceInited;
+
 	Shader* shader;
 	unsigned int FBO, texture;
 	int width, height;
-	char* dataArray;
+	unsigned char* buffer;
 
 	void generate(FractalData::Section* s, FractalData::InitialCondition* ic);
 	void createDataArray();

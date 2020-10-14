@@ -22,10 +22,10 @@ class Fractal {
 public:
 	Fractal(int resolution, int shaderType, FractalData::InitialCondition ic);
 
-	unsigned long long countBoxes(char boxType);
+	unsigned long long countBoxes(unsigned char boxType);
+
 
 private:
-	static bool gpuInterfaceInited;
 	int resolution, shaderType;
 	int shaderSectionCount, lastShaderSectionSize;
 	FractalData::InitialCondition ic;
