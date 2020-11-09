@@ -7,7 +7,7 @@
 
 unsigned int GpuInterface::fractalVAO, GpuInterface::fractalVBO, GpuInterface::fractalEBO;
 
-Shader** GpuInterface::shaders = new Shader*[FractalData::Type::size];
+Shader** GpuInterface::shaders = new Shader * [FractalData::Type::size];
 GLFWwindow* GpuInterface::window = nullptr;
 
 int GpuInterface::init() {
@@ -31,7 +31,7 @@ int GpuInterface::init() {
 		glfwTerminate();
 		return -1;
 	}
-	
+
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);	// set appropriate blend function (when transparency is used)
 
 	// VAO
@@ -51,6 +51,6 @@ int GpuInterface::init() {
 
 	// set up shaders
 	shaders[FractalData::Type::flipFractal] = new Shader("src/simulator/shaders/flipFractal-fragment.glsl");
-	
+
 	return 0;
 }

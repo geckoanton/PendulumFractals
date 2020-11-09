@@ -83,12 +83,12 @@ void FractalSection::generate(FractalData::Section* s, FractalData::InitialCondi
 		i[k * 3 + 1] = 4 - k - 1;
 		i[k * 3 + 2] = 4 - k - 2;
 	}
-	
+
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
 	shader->use();
 
-	glUniform2f(shader->getUniLoc("end"), (2.0f * (float) width) / (float) FractalData::MAX_FRACTAL_SECTION_SIDE, (2.0f * (float) height) / (float) FractalData::MAX_FRACTAL_SECTION_SIDE);
+	glUniform2f(shader->getUniLoc("end"), (2.0f * (float)width) / (float)FractalData::MAX_FRACTAL_SECTION_SIDE, (2.0f * (float)height) / (float)FractalData::MAX_FRACTAL_SECTION_SIDE);
 	glUniform4f(shader->getUniLoc("section"), s->cornerX, s->cornerY, s->spanX, s->spanY);
 
 	glUniform1f(shader->getUniLoc("m1"), ic->m1);
