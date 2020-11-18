@@ -51,7 +51,7 @@ void Fractal::loadCurrentSection(int xIn, int yIn, unsigned char* generate) {
 		}
 	}
 }
-unsigned char Fractal::getCharArr(int x, int y) {
+/*unsigned char Fractal::getCharArr(int x, int y) {
 	int computeX = (x - currentCornerX) + FractalData::MAX_FRACTAL_SECTION_SIDE;
 	int computeY = (y - currentCornerY) + FractalData::MAX_FRACTAL_SECTION_SIDE;
 
@@ -86,7 +86,7 @@ unsigned char Fractal::getCharArr(int x, int y) {
 	}
 
 	return currentSections[sectionY * CURRENT_SECTIONS_SIDE + sectionX]->getBuffer()[cellY * FractalData::MAX_FRACTAL_SECTION_SIDE + cellX];
-}
+}*/
 
 void Fractal::shiftCurretSections(int shiftX, int shiftY) {
 	FractalSection** newSections = new FractalSection * [CURRENT_SECTIONS_SIDE * CURRENT_SECTIONS_SIDE];
