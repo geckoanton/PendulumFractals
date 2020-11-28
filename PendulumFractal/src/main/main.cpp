@@ -30,8 +30,11 @@ int main() {
 	std::ofstream myfile;
 	myfile.open("example.txt");
 
-	Fractal box_count_f = Fractal(4096, FractalData::flipFractal, ic);
-	box_count_f.temp_char_arr = new unsigned char[4096 * 4096];
+	Fractal box_count_f = Fractal(1024, FractalData::flipFractal, ic);
+
+	//box_count_f.countBoxes(0);
+
+	/*box_count_f.temp_char_arr = new unsigned char[4096 * 4096];
 	for (int i = 0; i < 4096 * 4096; ++i) {
 		box_count_f.temp_char_arr[i] = 0;
 	}
@@ -39,19 +42,37 @@ int main() {
 		for (int y = 0; y < 64; y++) {
 			box_count_f.temp_char_arr[x + y * 4096] = 1;
 		}
-	}
-	auto crossings = box_count_f.getCompassBorderCrossing();
-	auto border_info = box_count_f.getBorderArea(0, 0, crossings);
-	delete(box_count_f.temp_char_arr);
-
-	/*for (int k = 1; k <= 16777216; k *= 2) {
-		Fractal f(k, FractalData::flipFractal, ic);
-
-		double delta = 1.0f / k;
-
-		std::cout << std::endl << std::endl << -log10(delta) << "\t" << log10((double)f.countEdges(0)) << std::endl << std::endl;
-		myfile << -log10(delta) << "\t" << log10((double)f.countEdges(0)) << std::endl;
 	}*/
+
+	//Fractal f(8192, FractalData::flipFractal, ic);
+
+	/*auto crossings = box_count_f.getCompassBorderCrossing();
+	auto border_info = box_count_f.getBorderArea(0, 0, crossings);*/
+	/*BorderArea border;
+	for (int y = 0; y < 8192; y += 4096) {
+		for (int x = 0; x < 8192; x += 4096) {
+			auto border_info = box_count_f.getBorderArea(x, y, crossings);
+
+			for (int i = 0; i < border.box_dimension_count; i++) {
+				border.boxSize[i] += border_info.boxSize[i];
+			}
+		}
+	}*/
+	/*std::cout << "start" << std::endl;
+	for (int i = 0; i < border_info.box_dimension_count; i++) {
+		std::cout << border_info.boxSize[i] << std::endl;
+	}
+	std::cout << "end" << std::endl;*/
+	//delete(box_count_f.temp_char_arr);
+
+	/*for (int k = 0; k < border_info.box_dimension_count; k++) {
+		double delta = pow(2, k) / 1024;
+
+		std::cout << -log10(delta) << "\t" << log10((double)border_info.boxSize[k]) << std::endl;;
+		myfile << -log10(delta) << "\t" << log10((double)border_info.boxSize[k]) << std::endl;
+	}
+
+	myfile.close();*/
 
 	return 0;
 }
