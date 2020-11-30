@@ -163,6 +163,51 @@ BorderArea Fractal::getBorderArea(int border_area_start_x, int border_area_start
 	return border_area;
 }
 
+void CompassStruct::getNextPoint(Fractal* fractal) {
+	direction = (direction + 4 + spin) % 8;
+	for (int i = 0; i < 8; i++) {
+		int pointing_x_pos;
+		int pointing_y_pos;
+		if (direction == POINTING_UP_LEFT ||
+			direction == POINTING_LEFT ||
+			direction == POINTING_BOTTOM_LEFT) {
+			pointing_x_pos = current_x - 1;
+		}
+		else if (direction == POINTING_UP_RIGHT ||
+			direction == POINTING_RIGHT ||
+			direction == POINTING_BOTTOM_RIGHT) {
+			pointing_x_pos = current_x + 1;
+		}
+		else {
+			pointing_x_pos = current_x;
+		}
+
+		if (direction == POINTING_UP_LEFT ||
+			direction == POINTING_UP ||
+			direction == POINTING_UP_RIGHT) {
+			pointing_y_pos = current_y - 1;
+		}
+		else if (direction == POINTING_BOTTOM_LEFT ||
+			direction == POINTING_BOTTOM ||
+			direction == POINTING_BOTTOM_RIGHT) {
+			pointing_y_pos = current_y + 1;
+		}
+		else {
+			pointing_y_pos = current_y;
+		}
+
+		if (pointing_x_pos >= 0 && pointing_x_pos < grid_width &&
+			pointing_y_pos >= 0 && pointing_y_pos < grid_height &&
+			fractal->getCharArr(pointing_x_pos, pointing_y_pos) == 0) {
+			current_x = pointing_x_pos;
+			current_y = pointing_y_pos;
+			return;
+		}
+
+		direction = (direction + spin + 8) % 8;
+	}
+}
+
 std::list<Position> Fractal::getCompassBorderCrossing() {
 	int border_size = BorderArea::size;
 	std::list<Position> border_crossings = {};

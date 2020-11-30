@@ -96,62 +96,14 @@ public:
 		POINTING_LEFT,
 		POINTING_UP_LEFT,
 	};
-	void getNextPoint(Fractal* fractal) {
-		direction = (direction + 4 + spin) % 8;
-		for (int i = 0; i < 8; i++) {
-			int pointing_x_pos;
-			int pointing_y_pos;
-			if (direction == POINTING_UP_LEFT ||
-				direction == POINTING_LEFT ||
-				direction == POINTING_BOTTOM_LEFT) {
-				pointing_x_pos = current_x - 1;
-			}
-			else if (direction == POINTING_UP_RIGHT ||
-				direction == POINTING_RIGHT ||
-				direction == POINTING_BOTTOM_RIGHT) {
-				pointing_x_pos = current_x + 1;
-			}
-			else {
-				pointing_x_pos = current_x;
-			}
-
-			if (direction == POINTING_UP_LEFT ||
-				direction == POINTING_UP ||
-				direction == POINTING_UP_RIGHT) {
-				pointing_y_pos = current_y - 1;
-			}
-			else if (direction == POINTING_BOTTOM_LEFT ||
-				direction == POINTING_BOTTOM ||
-				direction == POINTING_BOTTOM_RIGHT) {
-				pointing_y_pos = current_y + 1;
-			}
-			else {
-				pointing_y_pos = current_y;
-			}
-
-			if (pointing_x_pos >= 0 && pointing_x_pos < grid_width &&
-				pointing_y_pos >= 0 && pointing_y_pos < grid_height &&
-				fractal->getCharArr(pointing_x_pos, pointing_y_pos) == 0) {
-				current_x = pointing_x_pos;
-				current_y = pointing_y_pos;
-				return;
-			}
-
-			direction = (direction + spin + 8) % 8;
-		}
-	}
+	void getNextPoint(Fractal* fractal);
 };
 
 template<class T>
 class TwoDArray {
 public:
-	TwoDArray(int width, int height): m_width(width), m_height(height) {
-		//m_array.resize(m_width * m_height);
-		//m_array.clear();
-	}
-	T* getRef(int x, int y) {
-		return &m_array[x + m_width * y];
-	}
+	TwoDArray(int width, int height): m_width(width), m_height(height) {}
+	T* getRef(int x, int y) { return &m_array[x + m_width * y]; }
 protected:
 	T m_array[BorderArea::size * BorderArea::size] = {};
 	int m_width;
