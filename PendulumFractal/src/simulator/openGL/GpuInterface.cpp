@@ -1,7 +1,7 @@
 
 #include "GpuInterface.h"
 #include "Shader.h"
-#include "Fractal.h"
+#include "../Fractal.h"
 
 #include <iostream>
 

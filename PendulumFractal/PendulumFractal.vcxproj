@@ -22,21 +22,28 @@
     <ClCompile Include="glad.c" />
     <ClCompile Include="src\main\main.cpp" />
     <ClCompile Include="src\simulator\Fractal.cpp" />
-    <ClCompile Include="src\simulator\FractalSection.cpp" />
-    <ClCompile Include="src\simulator\GpuInterface.cpp" />
-    <ClCompile Include="src\simulator\Shader.cpp" />
+    <ClCompile Include="src\simulator\Lyapunov.cpp" />
+    <ClCompile Include="src\simulator\openGL\FractalSection.cpp" />
+    <ClCompile Include="src\simulator\openGL\GpuInterface.cpp" />
+    <ClCompile Include="src\simulator\openGL\Shader.cpp" />
+    <ClCompile Include="src\simulator\Simulator.cpp" />
+    <ClCompile Include="src\simulator\Vec4.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad.h" />
     <ClInclude Include="khrplatform.h" />
     <ClInclude Include="src\simulator\Fractal.h" />
-    <ClInclude Include="src\simulator\FractalSection.h" />
-    <ClInclude Include="src\simulator\GpuInterface.h" />
-    <ClInclude Include="src\simulator\Shader.h" />
+    <ClInclude Include="src\simulator\Lyapunov.h" />
+    <ClInclude Include="src\simulator\openGL\FractalSection.h" />
+    <ClInclude Include="src\simulator\openGL\GpuInterface.h" />
+    <ClInclude Include="src\simulator\openGL\Shader.h" />
+    <ClInclude Include="src\simulator\precisionType.h" />
+    <ClInclude Include="src\simulator\Simulator.h" />
+    <ClInclude Include="src\simulator\Vec4.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\simulator\shaders\default-vertex.glsl" />
-    <None Include="src\simulator\shaders\flipFractal-fragment.glsl" />
+    <None Include="src\simulator\openGL\shaders\default-vertex.glsl" />
+    <None Include="src\simulator\openGL\shaders\flipFractal-fragment.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

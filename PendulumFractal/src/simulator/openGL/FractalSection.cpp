@@ -2,7 +2,7 @@
 #include "FractalSection.h"
 #include "GpuInterface.h"
 #include "Shader.h"
-#include "Fractal.h"
+#include "../Fractal.h"
 
 #include <iostream>
 #include <math.h>
@@ -91,11 +91,11 @@ void FractalSection::generate(FractalData::Section* s, FractalData::InitialCondi
 	glUniform2f(shader->getUniLoc("end"), (2.0f * (float)width) / (float)FractalData::MAX_FRACTAL_SECTION_SIDE, (2.0f * (float)height) / (float)FractalData::MAX_FRACTAL_SECTION_SIDE);
 	glUniform4f(shader->getUniLoc("section"), s->cornerX, s->cornerY, s->spanX, s->spanY);
 
-	glUniform1f(shader->getUniLoc("m1"), ic->m1);
-	glUniform1f(shader->getUniLoc("m2"), ic->m2);
-	glUniform1f(shader->getUniLoc("l1"), ic->l1);
-	glUniform1f(shader->getUniLoc("l2"), ic->l2);
-	glUniform1f(shader->getUniLoc("g"), ic->g);
+	glUniform1f(shader->getUniLoc("m1"), (float) ic->m1);
+	glUniform1f(shader->getUniLoc("m2"), (float) ic->m2);
+	glUniform1f(shader->getUniLoc("l1"), (float) ic->l1);
+	glUniform1f(shader->getUniLoc("l2"), (float) ic->l2);
+	glUniform1f(shader->getUniLoc("g"), (float) ic->g);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 	glBindVertexArray(GpuInterface::fractalVAO);

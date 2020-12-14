@@ -4,37 +4,49 @@
     <Filter Include="src">
       <UniqueIdentifier>{db9ff32a-93cf-4526-bec1-4ac678cbc635}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\main">
-      <UniqueIdentifier>{c525ce0a-250d-44c2-b2ef-c5e472b2a9bd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\simulator">
-      <UniqueIdentifier>{199d59a6-7b7c-47a2-a1d6-3db2c8c89594}</UniqueIdentifier>
-    </Filter>
     <Filter Include="include">
       <UniqueIdentifier>{4a8ed796-8908-41e0-a5bb-718d40029930}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\simulator\shaders">
-      <UniqueIdentifier>{081497a1-dde6-4c89-8575-36acdb5dfd2c}</UniqueIdentifier>
+    <Filter Include="src\main">
+      <UniqueIdentifier>{cb568355-6f34-4c3a-9fc0-fbf77c85933e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\simulator">
+      <UniqueIdentifier>{0a6f74c6-b8d4-4148-ad26-d0ce2118fff2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\simulator\openGL">
+      <UniqueIdentifier>{55b47599-a871-4226-9781-514d8a1e1306}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\simulator\openGL\shaders">
+      <UniqueIdentifier>{daa564a9-e587-48b3-bd08-b9fe9eb3e506}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\main\main.cpp">
-      <Filter>src\main</Filter>
-    </ClCompile>
     <ClCompile Include="glad.c">
       <Filter>include</Filter>
-    </ClCompile>
-    <ClCompile Include="src\simulator\FractalSection.cpp">
-      <Filter>src\simulator</Filter>
-    </ClCompile>
-    <ClCompile Include="src\simulator\Shader.cpp">
-      <Filter>src\simulator</Filter>
     </ClCompile>
     <ClCompile Include="src\simulator\Fractal.cpp">
       <Filter>src\simulator</Filter>
     </ClCompile>
-    <ClCompile Include="src\simulator\GpuInterface.cpp">
+    <ClCompile Include="src\simulator\Lyapunov.cpp">
       <Filter>src\simulator</Filter>
+    </ClCompile>
+    <ClCompile Include="src\simulator\Simulator.cpp">
+      <Filter>src\simulator</Filter>
+    </ClCompile>
+    <ClCompile Include="src\simulator\Vec4.cpp">
+      <Filter>src\simulator</Filter>
+    </ClCompile>
+    <ClCompile Include="src\simulator\openGL\FractalSection.cpp">
+      <Filter>src\simulator\openGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\simulator\openGL\GpuInterface.cpp">
+      <Filter>src\simulator\openGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\simulator\openGL\Shader.cpp">
+      <Filter>src\simulator\openGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main\main.cpp">
+      <Filter>src\main</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -44,25 +56,37 @@
     <ClInclude Include="khrplatform.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="src\simulator\FractalSection.h">
-      <Filter>src\simulator</Filter>
-    </ClInclude>
-    <ClInclude Include="src\simulator\Shader.h">
-      <Filter>src\simulator</Filter>
-    </ClInclude>
     <ClInclude Include="src\simulator\Fractal.h">
       <Filter>src\simulator</Filter>
     </ClInclude>
-    <ClInclude Include="src\simulator\GpuInterface.h">
+    <ClInclude Include="src\simulator\Lyapunov.h">
       <Filter>src\simulator</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simulator\precisionType.h">
+      <Filter>src\simulator</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simulator\Simulator.h">
+      <Filter>src\simulator</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simulator\Vec4.h">
+      <Filter>src\simulator</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simulator\openGL\FractalSection.h">
+      <Filter>src\simulator\openGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simulator\openGL\GpuInterface.h">
+      <Filter>src\simulator\openGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simulator\openGL\Shader.h">
+      <Filter>src\simulator\openGL</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\simulator\shaders\default-vertex.glsl">
-      <Filter>src\simulator\shaders</Filter>
+    <None Include="src\simulator\openGL\shaders\default-vertex.glsl">
+      <Filter>src\simulator\openGL\shaders</Filter>
     </None>
-    <None Include="src\simulator\shaders\flipFractal-fragment.glsl">
-      <Filter>src\simulator\shaders</Filter>
+    <None Include="src\simulator\openGL\shaders\flipFractal-fragment.glsl">
+      <Filter>src\simulator\openGL\shaders</Filter>
     </None>
   </ItemGroup>
 </Project>
