@@ -2,7 +2,7 @@
 #pragma once
 
 // glad must be included before glfw
-#include "../../glad.h"
+#include "../../../glad.h"
 #include "GLFW/glfw3.h"
 
 class Shader;

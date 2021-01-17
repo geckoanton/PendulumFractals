@@ -2,9 +2,11 @@
 #include "Fractal.h"
 #include "openGL/GpuInterface.h"
 #include "openGL/FractalSection.h"
-
+#include "simulator.h"
+#include "Vec4.h"
 #include <math.h>
 #include <iostream>
+
 
 Fractal::Fractal(int resolution, int shaderType, FractalData::InitialCondition ic) {
 	this->currentSections = new FractalSection * [CURRENT_SECTIONS_SIDE * CURRENT_SECTIONS_SIDE];
@@ -90,6 +92,17 @@ unsigned char Fractal::getBatchChar(int x, int y) {
 
 	return currentSections[sectionY * CURRENT_SECTIONS_SIDE + sectionX]->getBuffer()[cellY * FractalData::MAX_FRACTAL_SECTION_SIDE + cellX];
 }
+unsigned char Fractal::getChar(int x, int y) {
+	const PREDEC PI = 3.1415926535897932384626433832795028841971693993751058209749445923078164062;
+	FractalData::InitialCondition ic_copy = this->ic;
+	Vec4 simulation_start((double)x * 2 * PI / resolution + PI, (double)y * 2 * PI / resolution + PI, 0, 0);
+	Simulator simulation(FractalData::flipFractal, simulation_start, &ic_copy);
+	simulation.iteration_count = iteration_count;
+	simulation.time_step = time_step;
+	return(simulation.generateValue());
+}
+
+
 /*unsigned char Fractal::getChar() {
     
 }*/
@@ -201,7 +214,7 @@ void CompassStruct::getNextPoint(Fractal* fractal) {
 
 		if (pointing_x_pos >= 0 && pointing_x_pos < grid_width &&
 			pointing_y_pos >= 0 && pointing_y_pos < grid_height &&
-			fractal->getBatchChar(pointing_x_pos, pointing_y_pos) == 0) {
+			fractal->getChar(pointing_x_pos, pointing_y_pos) == 0) {
 			current_x = pointing_x_pos;
 			current_y = pointing_y_pos;
 			return;
@@ -262,57 +275,99 @@ void CompassStruct::getNextPoint(Fractal* fractal) {
 	return border_crossings;
 }*/
 
-double Fractal::getCompassDimension(int compass_length) {
-	// Create a copy of the old grid
+struct CompassInfo {
+	int last_compass_point_x;
+	int last_compass_point_y;
+	int compass_length;
+	int compass_count;
+};
+
+void Fractal::getCompassDimension() {
 	CompassStruct compass_info;
 
-	compass_info.start_x = resolution / 2;
-	compass_info.start_y = 0;
-	compass_info.length = compass_length;
+	// Array to store where the compass has been
+	Array2D<char> flip_array = Array2D<char>(resolution, resolution);
 
-	// Reset the compass starting pos
-	compass_info.last_compass_point_x = compass_info.start_x;
-	compass_info.last_compass_point_y = compass_info.start_y;
-	compass_info.current_x = compass_info.start_x;
-	compass_info.current_y = compass_info.start_y;
+	// Set the compass starting pos
+	int start_x = resolution / 2;
+	int start_y = 0;
+	compass_info.current_x = start_x;
+	compass_info.current_y = start_y;
 	compass_info.grid_height = resolution;
 	compass_info.grid_width = resolution;
+
+	// Setup place to store compass info by compass length
+	std::vector<CompassInfo> compass_size;
+	compass_size.resize(std::log2(resolution));
+	for (int i = 0; i < compass_size.size(); i++) {
+		compass_size[i].last_compass_point_x = start_x;
+		compass_size[i].last_compass_point_y = start_y;
+		compass_size[i].compass_length = pow(2, i);
+	}
 
 	// Get the next point, walking around the fractal counter clockwise
 	compass_info.getNextPoint(this);
 
-	// Iterate while it has not gone around the fractal
-	while (!(compass_info.start_x == compass_info.current_x &&
-		compass_info.start_y == compass_info.current_y)) {
+	// Iterate while the compass has not gone around the fractal
+	while (!(start_x == compass_info.current_x &&
+		start_y == compass_info.current_y)) {
+		// Mark the point in the array(for box counting)
+		flip_array[compass_info.current_x][compass_info.current_y] = true;
+
 		// Get the next point, walking around the fractal counter clockwise
 		compass_info.getNextPoint(this);
 
-		// See if the point is the right length from the last compass point
-		if (pow(compass_info.last_compass_point_x - compass_info.current_x, 2) +
-			pow(compass_info.last_compass_point_y - compass_info.current_y, 2) >=
-			pow(compass_info.length, 2)) {
-			// Increase the compass count
-			compass_info.compass_count++;
+		for (int i = 0; i < compass_size.size(); i++) {
+			// See if the point is the right length from the last compass point
+			if (pow(compass_size[i].last_compass_point_x - compass_info.current_x, 2) +
+				pow(compass_size[i].last_compass_point_y - compass_info.current_y, 2) >=
+				pow(compass_size[i].compass_length, 2)) {
+				// Increase the compass count
+				compass_size[i].compass_count++;
 
-			// Update the compass position to check the distance from
-			compass_info.last_compass_point_x = compass_info.current_x;
-			compass_info.last_compass_point_y = compass_info.current_y;
+				// Update the compass position to check the distance from
+				compass_size[i].last_compass_point_x = compass_info.current_x;
+				compass_size[i].last_compass_point_y = compass_info.current_y;
 
-			if (compass_info.compass_count > compass_info.grid_width* compass_info.grid_height) {
-				goto exit_walkWithCompass;
 			}
 		}
 	}
-exit_walkWithCompass:
-	//std::cout << "Compass count: " << compass_info.compass_count << std::endl;
-	double length_left = pow((double)pow(compass_info.last_compass_point_x - compass_info.start_x, 2) +
-		pow(compass_info.last_compass_point_y - compass_info.start_y, 2), 0.5);
-	//std::cout << "To begin: " << length_left << std::endl;
 
-	double compass_count = compass_info.compass_count + length_left / compass_info.length;
-	std::cout << "Compass Count: " << compass_count << std::endl;
+	std::cout << "counting boxes..." << std::endl;
 
-	return compass_count;
+	int box_size = 1;
+
+	while (box_size < resolution) {
+		int box_count = 0;
+		// Do some box counting
+		for (int box_y = 0; box_y < resolution; box_y += box_size) {
+			for (int box_x = 0; box_x < resolution; box_x += box_size) {
+				for (int y = box_y; y < box_y + box_size; y++) {
+					for (int x = box_x; x < box_x + box_size; x++) {
+						if (flip_array[x][y]) {
+							box_count++;
+							goto box_loop_exit;
+						}
+					}
+				}
+			box_loop_exit:;
+			}
+		}
+		std::cout << "box_size: " << box_size << "  count: " << box_count << std::endl;
+		box_size = box_size * 2;
+	}
+
+
+	// Print out the compass count
+	for (int i = 0; i < compass_size.size(); i++) {
+		//std::cout << "Compass count: " << compass_info.compass_count << std::endl;
+		double length_left = pow((double)pow(compass_size[i].last_compass_point_x - start_x, 2) +
+			pow(compass_size[i].last_compass_point_y - start_y, 2), 0.5);
+		//std::cout << "To begin: " << length_left << std::endl;
+
+		double compass_count = compass_size[i].compass_count + length_left / compass_size[i].compass_length;
+		std::cout << "Compass Size: " << compass_size[i].compass_length << "  Compass Count: " << compass_count << std::endl;
+	}
 }
 
 void Fractal::shiftCurretSections(int shiftX, int shiftY) {
@@ -338,7 +393,72 @@ void Fractal::shiftCurretSections(int shiftX, int shiftY) {
 	currentSections = newSections;
 }
 
-unsigned long long Fractal::countBoxes(unsigned char boxType) {
+unsigned long long Fractal::countBoxes() {
+	Array2D<char> flip_array = Array2D<char>(resolution, resolution);
+
+	CompassStruct compass_info;
+
+	int start_x = resolution / 2;
+	int start_y = 0;
+	compass_info.current_x = start_x;
+	compass_info.current_y = start_y;
+
+	compass_info.grid_height = resolution;
+	compass_info.grid_width = resolution;
+
+	// Get the next point, walking around the fractal counter clockwise
+	compass_info.getNextPoint(this);
+
+	// Iterate while it has not gone around the fractal
+	while (!(start_x == compass_info.current_x &&
+		start_y == compass_info.current_y)) {
+
+		// Mark the point in the array
+		flip_array[compass_info.current_x][compass_info.current_y] = true;
+
+		// Get the next point, walking around the fractal counter clockwise
+		compass_info.getNextPoint(this);
+	}
+
+	std::cout << "counting boxes..." << std::endl;
+	
+
+	int box_size = 1;
+
+	while (box_size < resolution) {
+		int box_count = 0;
+		// Do some box counting
+		for (int box_y = 0; box_y < resolution; box_y += box_size) {
+			for (int box_x = 0; box_x < resolution; box_x += box_size) {
+				for (int y = box_y; y < box_y + box_size; y++) {
+					for (int x = box_x; x < box_x + box_size; x++) {
+						if (flip_array[x][y]) {
+							box_count++;
+							goto box_loop_exit;
+						}
+					}
+				}
+				box_loop_exit:;
+			}
+		}
+		std::cout << "box_size: " << box_size << "  count: " << box_count << std::endl;
+		box_size = box_size * 2;
+	}
+	return 0;
+
+
+	// Draw an image of border
+	for (int y = 0; y < resolution; y++) {
+		for (int x = 0; x < resolution; x++) {
+			if (flip_array[x][y] == true)
+				std::cout << "-";
+			else
+				std::cout << "#";
+		}
+		std::cout << std::endl;
+	}
+	return 0;
+
 	/*for (int a = 0; a < FractalData::MAX_FRACTAL_SECTION_SIDE * 3; a++) {
 		for (int b = 0; b < FractalData::MAX_FRACTAL_SECTION_SIDE * 3; b++) {
 			if (getBatchChar(b - FractalData::MAX_FRACTAL_SECTION_SIDE, a - FractalData::MAX_FRACTAL_SECTION_SIDE) == 0)
@@ -348,15 +468,15 @@ unsigned long long Fractal::countBoxes(unsigned char boxType) {
 		}
 		std::cout << std::endl;
 	}*/
-	for (int y = 0; y < resolution; y++) {
+	/*for (int y = 0; y < resolution; y++) {
 		for (int x = 0; x < resolution; x++) {
-			if (getBatchChar(x, y) == 0)
+			if (getChar(x, y) == 0)
 				std::cout << "-";
 			else
 				std::cout << "#";
 		}
 		std::cout << std::endl;
-	}
+	}*/
 	return 0;
 }
 /*BorderArea Fractal::countEdges(unsigned char boxType) {

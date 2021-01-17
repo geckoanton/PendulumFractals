@@ -13,8 +13,13 @@ public:
 	// TODO change to Fractal::InitialCondition
 	Simulator(int valueType, Vec4 state, FractalData::InitialCondition* ic);
 
+	// Returns 255 if fractal flips, 0 if it does not flip
 	unsigned char generateValue();
+
     void iterateSnapshot(PREDEC dt);
+
+	int iteration_count = 1000;
+	double time_step = 0.01;
 
 	Vec4 getState();
 

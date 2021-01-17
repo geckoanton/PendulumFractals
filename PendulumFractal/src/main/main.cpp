@@ -9,6 +9,7 @@
 #include <math.h>
 #include <string>
 #include <algorithm>
+#include <chrono>
 
 template<class T>
 std::string replaceDots(T input) { 
@@ -17,10 +18,57 @@ std::string replaceDots(T input) {
 	return return_string;
 }
 
+//get number of milliseconds since 1970
+inline long long int getTimeSinceEpoc() {
+	return(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count());
+}
 
 int main() {
+	double var = 1.0/8;
 
+	while (var <= 8) {
+		// Set up the conditions
+		FractalData::InitialCondition ic;
+		ic.m1 = 1.0;
+		ic.m2 = 1.0;
+		ic.l1 = 1.0;
+		ic.l2 = 1.0;
+		ic.g = 9.82;
 
+		// Set up the fractal calculation
+		Fractal box_count_fractal = Fractal(4096, FractalData::flipFractal, ic);
+		box_count_fractal.iteration_count = 1000;
+		box_count_fractal.time_step = 0.01;
+
+		// Print some info about simulation
+		std::cout << "m1: " << ic.m1 << "  m2: " << ic.m2 << "  l1:" << ic.l1 << "  l2: " << ic.l2 << "  g: " << ic.g << std::endl;
+		std::cout << "time_step: " << box_count_fractal.time_step << "s  simulated_time: " <<
+			box_count_fractal.time_step * box_count_fractal.iteration_count << "s" << std::endl;
+		std::cout << "total size(resolution): " << box_count_fractal.getResolution() << std::endl;
+
+		// Record when simulation starts
+		long long start_time = getTimeSinceEpoc();
+
+		// Do the calculation and print results
+		box_count_fractal.getCompassDimension();
+
+		// Print how long the calculation took
+		double calcualtion_time = getTimeSinceEpoc() - start_time;
+
+		int hours = calcualtion_time / (60 * 60 * 1000);
+		int minutes = (calcualtion_time - hours * (60 * 60 * 1000)) / (60 * 1000);
+		int seconds = (calcualtion_time - hours * (60 * 60 * 1000) - minutes * (60 * 1000)) / 1000;
+		int milli_seconds = (calcualtion_time - hours * (60 * 60 * 1000) - minutes * (60 * 1000) - seconds * (1000));
+
+		std::cout << "calculation time: " << calcualtion_time << "ms" << std::endl;
+		std::cout << "( " << hours << "h " << minutes << "m " << seconds << "s " << milli_seconds << "ms) " << std::endl;
+
+		std::cout << std::endl << std::endl << std::endl;
+
+		// Double the var variable for next iteration
+		var = var * 2;
+	}
+	
 	/*float float_number = 10.11;
 	std::cout << replaceDots(float_number) << std::endl;
 

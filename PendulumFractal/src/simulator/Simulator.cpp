@@ -98,9 +98,9 @@ unsigned char Simulator::getFlipFractalValue() {
 
 	iterateSnapshot(0.01f);
 
-	for(int i = 0; i < 1000; i++) {
+	for(int i = 0; i < iteration_count; i++) {
 		PREDEC prevB = state->gety();
-		iterateSnapshot(0.01f);
+		iterateSnapshot(time_step);
 		PREDEC currentB = state->gety();
 
 		if ((currentB < PI && prevB > PI && currentB < 5 && prevB < 5) || (currentB > PI && prevB < PI && currentB < 5 && prevB < 5)) {
