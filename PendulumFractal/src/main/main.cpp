@@ -26,6 +26,9 @@ inline long long int getTimeSinceEpoc() {
 int main() {
 	double var = 1.0/8;
 
+	// Where you want the output(no argument means that it does not save to file)
+	PrintOutput print_output("data.txt");
+
 	while (var <= 8) {
 		// Set up the conditions
 		FractalData::InitialCondition ic;
@@ -41,16 +44,18 @@ int main() {
 		box_count_fractal.time_step = 0.01;
 
 		// Print some info about simulation
-		std::cout << "m1: " << ic.m1 << "  m2: " << ic.m2 << "  l1:" << ic.l1 << "  l2: " << ic.l2 << "  g: " << ic.g << std::endl;
-		std::cout << "time_step: " << box_count_fractal.time_step << "s  simulated_time: " <<
-			box_count_fractal.time_step * box_count_fractal.iteration_count << "s" << std::endl;
-		std::cout << "total size(resolution): " << box_count_fractal.getResolution() << std::endl;
+		print_output << "m1: " << ic.m1 << "  m2: " << ic.m2 << "  l1:" << ic.l1 << "  l2: " << ic.l2 << "  g: " << ic.g << "\n";
+		print_output << "time_step: " << box_count_fractal.time_step << "s  simulated_time: " <<
+			box_count_fractal.time_step * box_count_fractal.iteration_count << "s" << "\n";
+		print_output << "total size(resolution): " << box_count_fractal.getResolution() << "\n";
+
+		print_output.printOnScreen();
 
 		// Record when simulation starts
 		long long start_time = getTimeSinceEpoc();
 
 		// Do the calculation and print results
-		box_count_fractal.getCompassDimension();
+		box_count_fractal.getCompassDimension(print_output);
 
 		// Print how long the calculation took
 		double calcualtion_time = getTimeSinceEpoc() - start_time;
@@ -60,10 +65,12 @@ int main() {
 		int seconds = (calcualtion_time - hours * (60 * 60 * 1000) - minutes * (60 * 1000)) / 1000;
 		int milli_seconds = (calcualtion_time - hours * (60 * 60 * 1000) - minutes * (60 * 1000) - seconds * (1000));
 
-		std::cout << "calculation time: " << calcualtion_time << "ms" << std::endl;
-		std::cout << "( " << hours << "h " << minutes << "m " << seconds << "s " << milli_seconds << "ms) " << std::endl;
+		print_output << "calculation time: " << calcualtion_time << "ms" << "\n";
+		print_output << "( " << hours << "h " << minutes << "m " << seconds << "s " << milli_seconds << "ms) " << "\n";
 
-		std::cout << std::endl << std::endl << std::endl;
+		print_output << "\n\n\n";
+
+		print_output.printOnScreen();
 
 		// Double the var variable for next iteration
 		var = var * 2;

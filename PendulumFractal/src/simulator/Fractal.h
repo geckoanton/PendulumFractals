@@ -5,6 +5,41 @@
 #include <list>
 #include <vector>
 #include "precisionType.h"
+#include <ostream>
+#include <streambuf>
+#include <sstream>
+#include <iostream>
+#include <string>
+#include <fstream>
+
+// Class for handling printing when using multiple threads
+class PrintOutput : public std::ostream {
+public:
+	PrintOutput(std::string t_output_file = "") : std::ostream(NULL), output_file(t_output_file) {}
+
+
+	template<class T>
+	PrintOutput& operator<<(const T& obj) {
+		// write obj to stream
+		stream << obj;
+		return *this;
+	}
+	void printOnScreen() {
+		// Print what is in stream to the console
+		std::cout << stream.str();
+		// Print to file
+		if (output_file != "") {
+			std::ofstream outfile;
+			outfile.open(output_file, std::ios_base::app); // append instead of overwrite
+			outfile << stream.str();
+		}
+		// Remove everything in stream
+		stream.str("");
+	}
+	std::string output_file;
+private:
+	std::ostringstream stream = std::ostringstream();
+};
 
 class FractalSection;
 
@@ -30,7 +65,7 @@ public:
 	Fractal(int resolution, int shaderType, FractalData::InitialCondition ic);
 
 	unsigned long long countBoxes();
-	void getCompassDimension();
+	void getCompassDimension(PrintOutput& print_output);
 
 	int iteration_count = 1000;
 	double time_step = 0.01;

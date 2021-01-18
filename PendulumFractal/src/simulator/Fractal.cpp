@@ -282,7 +282,7 @@ struct CompassInfo {
 	int compass_count;
 };
 
-void Fractal::getCompassDimension() {
+void Fractal::getCompassDimension(PrintOutput& print_output) {
 	CompassStruct compass_info;
 
 	// Array to store where the compass has been
@@ -333,7 +333,9 @@ void Fractal::getCompassDimension() {
 		}
 	}
 
-	std::cout << "counting boxes..." << std::endl;
+	print_output << "counting boxes..." << "\n";
+
+	print_output.printOnScreen();
 
 	int box_size = 1;
 
@@ -353,7 +355,7 @@ void Fractal::getCompassDimension() {
 			box_loop_exit:;
 			}
 		}
-		std::cout << "box_size: " << box_size << "  count: " << box_count << std::endl;
+		print_output << "box_size: " << box_size << "  count: " << box_count << "\n";
 		box_size = box_size * 2;
 	}
 
@@ -366,8 +368,9 @@ void Fractal::getCompassDimension() {
 		//std::cout << "To begin: " << length_left << std::endl;
 
 		double compass_count = compass_size[i].compass_count + length_left / compass_size[i].compass_length;
-		std::cout << "Compass Size: " << compass_size[i].compass_length << "  Compass Count: " << compass_count << std::endl;
+		print_output << "Compass Size: " << compass_size[i].compass_length << "  Compass Count: " << compass_count << "\n";
 	}
+	print_output.printOnScreen();
 }
 
 void Fractal::shiftCurretSections(int shiftX, int shiftY) {
