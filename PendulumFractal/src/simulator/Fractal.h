@@ -12,7 +12,7 @@
 #include <string>
 #include <fstream>
 
-// Class for handling printing when using multiple threads
+// For deciding where you want to output things
 class PrintOutput : public std::ostream {
 public:
 	PrintOutput(std::string t_output_file = "") : std::ostream(NULL), output_file(t_output_file) {}
