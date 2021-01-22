@@ -10,9 +10,14 @@
 #include <iostream>
 #include <math.h>
 
+inline double pMod(double num, double mod) {
+	return fmod(fmod(num, mod) + mod, mod);
+}
+
 #define PREDEC double
 #define PREsin std::sin
 #define PREcos std::cos
-#define PREfmod std::fmod
+//#define PREfmod std::fmod
+#define PREfmod pMod
 #define PREsqrt std::sqrt
 #define PRElog std::log

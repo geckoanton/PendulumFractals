@@ -28,6 +28,7 @@
     <ClCompile Include="src\simulator\openGL\Shader.cpp" />
     <ClCompile Include="src\simulator\Simulator.cpp" />
     <ClCompile Include="src\simulator\Vec4.cpp" />
+    <ClCompile Include="src\util\display.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad.h" />
@@ -40,6 +41,7 @@
     <ClInclude Include="src\simulator\precisionType.h" />
     <ClInclude Include="src\simulator\Simulator.h" />
     <ClInclude Include="src\simulator\Vec4.h" />
+    <ClInclude Include="src\util\display.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\simulator\openGL\shaders\default-vertex.glsl" />
@@ -133,8 +135,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)\lib\SDL_x64;$(ProjectDir)\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -168,8 +170,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)\lib\SDL_x64;$(ProjectDir)\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

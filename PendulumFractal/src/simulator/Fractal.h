@@ -71,13 +71,13 @@ public:
 	double time_step = 0.01;
 
 	int getResolution() { return resolution; }
-
-private:
-	void loadCurrentSection(int xIn, int yIn, unsigned char* generate);
-	void shiftCurretSections(int shiftX, int shiftY);
+	FractalData::InitialCondition getIc() { return ic; }
 
 	unsigned char getBatchChar(int x, int y);
 	unsigned char getChar(int x, int y);
+private:
+	void loadCurrentSection(int xIn, int yIn, unsigned char* generate);
+	void shiftCurretSections(int shiftX, int shiftY);
 
 	//std::list<Position> getCompassBorderCrossing();
 	//BorderArea getBorderArea(int border_area_start_x, int border_area_start_y, std::list<Position> border_crossings);
@@ -87,6 +87,7 @@ private:
 
 	int resolution, resolutionSectionCount, shaderType;
 	int currentCornerX = 0, currentCornerY = 0;
+
 	FractalData::InitialCondition ic;
 
 	friend struct CompassStruct;

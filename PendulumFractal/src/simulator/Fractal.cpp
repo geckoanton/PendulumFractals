@@ -94,8 +94,15 @@ unsigned char Fractal::getBatchChar(int x, int y) {
 }
 unsigned char Fractal::getChar(int x, int y) {
 	const PREDEC PI = 3.1415926535897932384626433832795028841971693993751058209749445923078164062;
+	//const PREDEC PI = 3;
 	FractalData::InitialCondition ic_copy = this->ic;
-	Vec4 simulation_start((double)x * 2 * PI / resolution + PI, (double)y * 2 * PI / resolution + PI, 0, 0);
+	double actual_x = (x - resolution / 2) + 0.5;
+	double actual_y = (y - resolution / 2) + 0.5;
+	//std::cout << actual_x << " " << actual_y << "\n";
+	double angle_x = (actual_x * 2 * PI) / resolution;
+	double angle_y = (actual_y * 2 * PI) / resolution;
+	//Vec4 simulation_start((double)(x+resolution / 2.0) * 2 * PI / resolution, (double)(y+resolution / 2.0) * 2 * PI / resolution, 0, 0);
+	Vec4 simulation_start(angle_x, angle_y, 0, 0);
 	Simulator simulation(FractalData::flipFractal, simulation_start, &ic_copy);
 	simulation.iteration_count = iteration_count;
 	simulation.time_step = time_step;
@@ -289,12 +296,24 @@ void Fractal::getCompassDimension(PrintOutput& print_output) {
 	Array2D<char> flip_array = Array2D<char>(resolution, resolution);
 
 	// Set the compass starting pos
-	int start_x = resolution / 2;
-	int start_y = 0;
-	compass_info.current_x = start_x;
-	compass_info.current_y = start_y;
+	bool start_left = ic.l1 > 1.0 / (ic.m1 + 1);
+	if (start_left) {
+		// Start on the left side of the fractal
+		compass_info.current_x = resolution / 2;
+		compass_info.current_y = 0;
+	}
+	else {
+		// Start at the top of the fractal
+		compass_info.current_x = 0;
+		compass_info.current_y = resolution / 2;
+	}
 	compass_info.grid_height = resolution;
 	compass_info.grid_width = resolution;
+
+	compass_info.getNextPoint(this);
+
+	int start_x = compass_info.current_x;
+	int start_y = compass_info.current_y;
 
 	// Setup place to store compass info by compass length
 	std::vector<CompassInfo> compass_size;

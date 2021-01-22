@@ -7,6 +7,16 @@
 #include "Fractal.h"
 #include "precisionType.h"
 
+#include "../util/display.h"
+
+#include <chrono>
+#include <thread>
+
+//warning! may sleep longer than expected
+inline void sleep(long long int milliseconds) {
+	std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
+}
+
 Simulator::Simulator(int valueType, Vec4 state, FractalData::InitialCondition* ic) {
 	this->valueType = valueType;
 
@@ -15,6 +25,7 @@ Simulator::Simulator(int valueType, Vec4 state, FractalData::InitialCondition* i
 	this->ic = ic;
 }
 
+// 255 means flip, 0 means no flip
 unsigned char Simulator::generateValue() {
 	switch(valueType) {
 		case FractalData::flipFractal:
@@ -25,6 +36,8 @@ unsigned char Simulator::generateValue() {
 }
 
 void Simulator::iterateSnapshot(PREDEC dt) {
+	const PREDEC PI = 3.1415926535897932384626433832795028841971693993751058209749445923078164062;
+
 	Vec4 k1 = getStateChange(*this->state);
 	Vec4 k2 = getStateChange(this->state->add(k1.mul(dt / 2)));
 	Vec4 k3 = getStateChange(this->state->add(k2.mul(dt / 2)));
@@ -34,8 +47,21 @@ void Simulator::iterateSnapshot(PREDEC dt) {
 
 	PREDEC a = PREfmod(state->getx() + stateChange.getx(), 6.28318530718);
 	PREDEC b = PREfmod(state->gety() + stateChange.gety(), 6.28318530718);
+	
 	PREDEC da = state->getz() + stateChange.getz();
 	PREDEC db = state->getw() + stateChange.getw();
+
+	/*DisplayWindow::fill(255, 255, 255, 255);
+	DisplayWindow::drawRectangle(getx1()*100 + 300, -gety1()*100 + 300, 10, 10, 255, 0, 0, 255);
+	DisplayWindow::drawRectangle(getx2()*100 + 300, -gety2()*100 + 300, 10, 10, 0, 0, 255, 255);
+	DisplayWindow::drawRectangle(300, 300, 10, 10, 0, 255, 0, 255);
+	DisplayWindow::flip();
+	DisplayWindow::update();
+	sleep(50);*/
+
+	//std::cout << a << std::endl;
+
+
 
 	this->state->update(a, b, da, db);
 }
@@ -96,14 +122,20 @@ PREDEC Simulator::C2(PREDEC a, PREDEC b, PREDEC da, PREDEC db) {
 unsigned char Simulator::getFlipFractalValue() {
 	const PREDEC PI = 3.1415926535897932384626433832795028841971693993751058209749445923078164062;
 
-	iterateSnapshot(0.01f);
+	iterateSnapshot(time_step);
 
 	for(int i = 0; i < iteration_count; i++) {
 		PREDEC prevB = state->gety();
+		PREDEC prevA = state->getx();
 		iterateSnapshot(time_step);
 		PREDEC currentB = state->gety();
+		PREDEC currentA = state->getx();
 
 		if ((currentB < PI && prevB > PI && currentB < 5 && prevB < 5) || (currentB > PI && prevB < PI && currentB < 5 && prevB < 5)) {
+			return 255;
+		}
+
+		if ((currentA < PI && prevA > PI&& currentA < 5 && prevA < 5) || (currentA > PI&& prevA < PI && currentA < 5 && prevA < 5)) {
 			return 255;
 		}
 	}
