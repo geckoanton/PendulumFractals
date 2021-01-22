@@ -77,7 +77,7 @@ void drawFractalEdge(Fractal& fractal) {
 		DisplayWindow::setRenderTarget(texture);
 
 		// Draw a black square on that position
-		DisplayWindow::drawRectangle(compass_info.current_x, compass_info.current_y, 1, 1, 0, 0, 0, 255);
+		DisplayWindow::drawRectangle(compass_info.current_x, fractal.getResolution() - compass_info.current_y - 1, 1, 1, 0, 0, 0, 255);
 
 		// Set render target(where it will draw) to the window
 		DisplayWindow::setRenderTarget(nullptr);
@@ -94,6 +94,28 @@ void drawFractalEdge(Fractal& fractal) {
 
 	// Save the texture to file
 	DisplayWindow::saveTextureToFile("fractal_edge_img.png", texture);
+
+	// Set render target(where it will draw) to the texture
+	DisplayWindow::setRenderTarget(texture);
+
+	// Draw a big red cross
+	DisplayWindow::drawRectangle(fractal.getResolution() / 2, 0, 1, fractal.getResolution(), 255, 0, 0, 255);
+	DisplayWindow::drawRectangle(0, fractal.getResolution() / 2, fractal.getResolution(), 1, 255, 0, 0, 255);
+
+	// Set render target(where it will draw) to the window
+	DisplayWindow::setRenderTarget(nullptr);
+
+	// Draw the texture on the window
+	DisplayWindow::copyTextureToRenderTarget(texture, nullptr, nullptr);
+
+	// Update what is one the window(to show what has been drawn)
+	DisplayWindow::flip();
+
+	// Make sure the window stays alive by updating it(also updates button presses etc.)
+	DisplayWindow::update();
+
+	// Save the texture to file
+	DisplayWindow::saveTextureToFile("fractal_edge_img_cross.png", texture);
 
 	// Run until the window is closed by user
 	while (DisplayWindow::isRunning()) {
@@ -127,11 +149,11 @@ void drawFractal(Fractal& fractal) {
 		for (int y = 0; y < fractal.getResolution(); y++) {
 			if (fractal.getChar(x, y) == 0) {
 				// Draw a black square if it does not flip
-				DisplayWindow::drawRectangle(x, y, 1, 1, 0, 0, 0, 255);
+				DisplayWindow::drawRectangle(x, fractal.getResolution() - y - 1, 1, 1, 0, 0, 0, 255);
 			}
 			else {
 				// Draw a white square if it flips
-				DisplayWindow::drawRectangle(x, y, 1, 1, 255, 255, 255, 255);
+				DisplayWindow::drawRectangle(x, fractal.getResolution() - y - 1, 1, 1, 255, 255, 255, 255);
 			}
 		}
 		// Set render target(where it will draw) to the window
@@ -150,6 +172,28 @@ void drawFractal(Fractal& fractal) {
 
 	// Save the texture to file
 	DisplayWindow::saveTextureToFile("fractal_img.png", texture);
+
+	// Set render target(where it will draw) to the texture
+	DisplayWindow::setRenderTarget(texture);
+
+	// Draw a big red cross
+	DisplayWindow::drawRectangle(fractal.getResolution() / 2, 0, 1, fractal.getResolution(), 255, 0, 0, 255);
+	DisplayWindow::drawRectangle(0, fractal.getResolution() / 2, fractal.getResolution(), 1, 255, 0, 0, 255);
+
+	// Set render target(where it will draw) to the window
+	DisplayWindow::setRenderTarget(nullptr);
+
+	// Draw the texture on the window
+	DisplayWindow::copyTextureToRenderTarget(texture, nullptr, nullptr);
+
+	// Update what is one the window(to show what has been drawn)
+	DisplayWindow::flip();
+
+	// Make sure the window stays alive by updating it(also updates button presses etc.)
+	DisplayWindow::update();
+
+	// Save the texture to file
+	DisplayWindow::saveTextureToFile("fractal_img_cross.png", texture);
 
 	// Run until the window is closed by user
 	while (DisplayWindow::isRunning()) {
@@ -172,14 +216,14 @@ int wmain() {
 	while (var <= 8) {
 		// Set up the conditions
 		FractalData::InitialCondition ic;
-		ic.m1 = 1;
-		ic.m2 = 16.0;
+		ic.m1 = 1.0;
+		ic.m2 = 1.0;
 		ic.l1 = 1.0;
 		ic.l2 = 1.0;
 		ic.g = 9.82;
 
 		// Set up the fractal calculation
-		Fractal box_count_fractal = Fractal(1024, FractalData::flipFractal, ic);
+		Fractal box_count_fractal = Fractal(256, FractalData::flipFractal, ic);
 		box_count_fractal.iteration_count = 1000;
 		box_count_fractal.time_step = 0.01;
 
