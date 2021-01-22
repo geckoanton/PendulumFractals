@@ -173,13 +173,13 @@ int wmain() {
 		// Set up the conditions
 		FractalData::InitialCondition ic;
 		ic.m1 = 1;
-		ic.m2 = 1.0;
+		ic.m2 = 16.0;
 		ic.l1 = 1.0;
 		ic.l2 = 1.0;
 		ic.g = 9.82;
 
 		// Set up the fractal calculation
-		Fractal box_count_fractal = Fractal(128, FractalData::flipFractal, ic);
+		Fractal box_count_fractal = Fractal(1024, FractalData::flipFractal, ic);
 		box_count_fractal.iteration_count = 1000;
 		box_count_fractal.time_step = 0.01;
 
