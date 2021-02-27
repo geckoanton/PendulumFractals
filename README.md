@@ -10,4 +10,4 @@ Due to the parallel nature of these simulations, a significant performance incre
 
 <img src="lyapunov.png" width="512" alt="Flip Fractal">
 
-A similar method was used to generate the Lyapunov exponent image above (i.e. each pixel corresponds to a starting angle of each pendulum arm). However this time two separate double pendulums were simulated for each pixel where one slightly differs in its starting position from the other. The rate at wich the two pendulums diverge determines the pixels color from smallest divergence to greates in: black, blue, green, yellow, orange, red.
+A similar method was used to generate the Lyapunov exponent image above (i.e. each pixel corresponds to a starting angle of each pendulum arm). However this time two separate double pendulums were simulated for each pixel where one slightly differs in its starting position from the other. The rate at which the two pendulums diverge determines the pixels color from smallest divergence to greates in: black, blue, green, yellow, orange, red.
