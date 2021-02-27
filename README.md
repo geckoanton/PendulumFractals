@@ -4,7 +4,7 @@ This repository contains code for simulating double pendulums on the CPU and GPU
 
 <img src="flipFractal.png" width="512" alt="Flip Fractal">
 
-The example image above varies each pendulum arm independently on the x and y axes, and sets the corresponding pixel to white if any of the pendulum arms have flipt within 10 seconds, otherwise the color remains black.
+The example image above varies each pendulum arm independently on the x and y axes, and sets the corresponding pixel to white if any of the pendulum arms have flipped within 10 seconds, otherwise the color remains black.
 
 Due to the parallel nature of these simulations, a significant performance increase can be achived by letting the GPU process each individual pendulum simultaneously (however at the cost of losing some precision).
 
