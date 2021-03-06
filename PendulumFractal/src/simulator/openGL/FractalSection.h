@@ -7,7 +7,7 @@ namespace FractalData {
 	struct Section;
 	struct InitialCondition;
 
-	const int MAX_FRACTAL_SECTION_SIDE = 256;
+	const int MAX_FRACTAL_SECTION_SIDE = 1024;	// must be power of 2
 };
 
 class FractalSection {

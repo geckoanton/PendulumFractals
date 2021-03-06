@@ -1,10 +1,17 @@
 #pragma once
 
+#include "../util/util.h"
+
 #include <math.h>
 #include <iostream>
 #include <list>
 #include <vector>
 #include "precisionType.h"
+#include <ostream>
+#include <streambuf>
+#include <sstream>
+#include <iostream>
+#include <fstream>
 
 class FractalSection;
 
@@ -29,16 +36,20 @@ class Fractal {
 public:
 	Fractal(int resolution, int shaderType, FractalData::InitialCondition ic);
 
-	unsigned long long countBoxes(unsigned char boxType);
-	//BorderArea countEdges(unsigned char boxType);
-	double getCompassDimension(int compass_length);
+	unsigned long long countBoxes();
+	void getCompassDimension(PrintOutput& print_output);
 
-private:
-	void loadCurrentSection(int xIn, int yIn, unsigned char* generate);
-	void shiftCurretSections(int shiftX, int shiftY);
+	int iteration_count = 1000;
+	double time_step = 0.01;
+
+	int getResolution() { return resolution; }
+	FractalData::InitialCondition getIc() { return ic; }
 
 	unsigned char getBatchChar(int x, int y);
 	unsigned char getChar(int x, int y);
+private:
+	void loadCurrentSection(int xIn, int yIn, unsigned char* generate);
+	void shiftCurretSections(int shiftX, int shiftY);
 
 	//std::list<Position> getCompassBorderCrossing();
 	//BorderArea getBorderArea(int border_area_start_x, int border_area_start_y, std::list<Position> border_crossings);
@@ -48,6 +59,7 @@ private:
 
 	int resolution, resolutionSectionCount, shaderType;
 	int currentCornerX = 0, currentCornerY = 0;
+
 	FractalData::InitialCondition ic;
 
 	friend struct CompassStruct;
@@ -71,17 +83,11 @@ struct Position {
 
 struct CompassStruct {
 public:
-	int start_x;
-	int start_y;
 	int current_x;
 	int current_y;
 	int grid_width;
 	int grid_height;
-	int last_compass_point_x;
-	int last_compass_point_y;
 	char direction = POINTING_RIGHT;
-	int length = 5;
-	int compass_count = 0;
 	char spin = CLOCKWISE_SPIN;
 	enum {
 		CLOCKWISE_SPIN = 2,
@@ -102,13 +108,49 @@ public:
 	void getNextPoint(Fractal* fractal);
 };
 
-template<class T>
-class TwoDArray {
+
+template<class TYPE>
+class Array2DRef;
+
+// 2D Array that can get custom size during runtime
+template<class TYPE>
+class Array2D {
+	std::vector<TYPE> arr;
+	unsigned int m_size_1;
+	unsigned int m_size_2;
 public:
-	TwoDArray(int width, int height): m_width(width), m_height(height) {}
-	T* getRef(int x, int y) { return &m_array[x + m_width * y]; }
-protected:
-	T m_array[BorderArea::size * BorderArea::size] = {};
-	int m_width;
-	int m_height;
+	Array2D(unsigned int size_1, unsigned int size_2) :
+		m_size_1(size_1), m_size_2(size_2) {
+		arr.resize(m_size_1 * m_size_2);
+	}
+	Array2DRef<TYPE> operator[](unsigned int index_1);
+	TYPE& getPosition(unsigned int index_1, unsigned int index_2) {
+		return(arr[index_1 * (long)m_size_1 + index_2]);
+	}
+	unsigned int size() { return m_size_1; }
+	friend Array2DRef<TYPE>;
 };
+
+// Help class for Array2D
+template<class TYPE>
+class Array2DRef {
+	Array2D<TYPE>* arr_2d;
+	unsigned int index_1;
+public:
+	TYPE& operator[](unsigned int index_2) {
+		return arr_2d->getPosition(index_1, index_2);
+	}
+	unsigned int size() {
+		return arr_2d->m_size_2;
+	}
+	friend Array2D<TYPE>;
+};
+template<class TYPE>
+Array2DRef<TYPE> Array2D<TYPE>::operator[](unsigned int index_1) {
+	Array2DRef<TYPE> arr_ref;
+	arr_ref.arr_2d = this;
+	arr_ref.index_1 = index_1;
+	return arr_ref;
+}
+
+

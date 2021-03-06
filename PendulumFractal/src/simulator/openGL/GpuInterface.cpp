@@ -50,7 +50,7 @@ int GpuInterface::init() {
 	glBindVertexArray(0);
 
 	// set up shaders
-	shaders[FractalData::Type::flipFractal] = new Shader("src/simulator/shaders/flipFractal-fragment.glsl");
+	//shaders[FractalData::Type::flipFractal] = new Shader("src/simulator/shaders/flipFractal-fragment.glsl");
 
 	return 0;
 }

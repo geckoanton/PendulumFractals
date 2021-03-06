@@ -11,7 +11,7 @@ public:
 	unsigned int getProgram();
 	int getUniLoc(std::string var);
 private:
-	const std::string VERTEX_SOURCE = "src/simulator/shaders/default-vertex.glsl";
+	const std::string VERTEX_SOURCE = "src/openGL/shaders/default-vertex.glsl";
 
 	unsigned int shaderProgram;
 };

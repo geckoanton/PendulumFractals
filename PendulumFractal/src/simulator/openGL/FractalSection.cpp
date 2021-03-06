@@ -10,10 +10,10 @@
 bool FractalSection::gpuInterfaceInited = false;
 
 FractalSection::FractalSection(Shader* shader, int width, int height, FractalData::Section* s, FractalData::InitialCondition* ic) {
-	if (!gpuInterfaceInited) {
+	/*if (!gpuInterfaceInited) {
 		GpuInterface::init();
 		gpuInterfaceInited = true;
-	}
+	}*/
 
 	// FBO
 	glGenFramebuffers(1, &FBO);
@@ -123,7 +123,6 @@ void FractalSection::createDataArray() {
 			break;
 		}
 	}
-
 
 	glReadPixels(0, 0, width, height, GL_RED, GL_UNSIGNED_BYTE, buffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);

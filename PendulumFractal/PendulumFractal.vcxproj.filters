@@ -19,6 +19,9 @@
     <Filter Include="src\simulator\openGL\shaders">
       <UniqueIdentifier>{daa564a9-e587-48b3-bd08-b9fe9eb3e506}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\util">
+      <UniqueIdentifier>{2292c91f-aa3d-4bae-9a1b-7b84a8cd937b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">
@@ -47,6 +50,12 @@
     </ClCompile>
     <ClCompile Include="src\main\main.cpp">
       <Filter>src\main</Filter>
+    </ClCompile>
+    <ClCompile Include="src\util\display.cpp">
+      <Filter>src\util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\util\util.cpp">
+      <Filter>src\util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -79,6 +88,12 @@
     </ClInclude>
     <ClInclude Include="src\simulator\openGL\Shader.h">
       <Filter>src\simulator\openGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\display.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\util.h">
+      <Filter>src\util</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
