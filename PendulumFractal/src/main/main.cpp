@@ -1,9 +1,12 @@
+
 #include "../simulator/openGL/GpuInterface.h"
 #include "../simulator/openGL/FractalSection.h"
 #include "../simulator/Fractal.h"
+#include "../simulator/Lyapunov.h"
 #include "../util/display.h"
 #include "../simulator/Vec4.h"
 #include "../simulator/Simulator.h"
+#include "../simulator/openGL/Shader.h"
 #include "../util/util.h"
 
 #include <iostream>
@@ -14,6 +17,10 @@
 #include <algorithm>
 #include <chrono>
 #include <thread>
+#include <vector>
+#include <limits>
+#include <mutex>
+#include <future>
 
 class Mandelbrot : public Fractal {
 public:
@@ -758,6 +765,95 @@ void calculateMandelbrotDimension() {
 	calculateCompassAndBoxDimention(mandelbrot);
 }
 
+void lyaFile(int i, int k, int gridSize) {
+	Lyapunov l;
+
+	Vec4 deltaError(0.0000001, 0, 0, 0);
+	PREDEC D = 0.0001;
+	int N = 100;
+	PREDEC dt = 0.001;
+
+	typedef std::numeric_limits< double > dbl;
+
+	double m1Overm2 = pow(sqrt(2), i);
+	double l1Overl2 = pow(sqrt(2), k);
+
+	std::ofstream outdata;
+	outdata.precision(dbl::max_digits10);
+	std::string filename = "outdata/outdata_" + std::to_string(i) + "_" + std::to_string(k) + ".txt";
+	outdata.open(filename);
+
+	FractalData::InitialCondition ic = { m1Overm2, 1, l1Overl2, 1, 9.82 };
+
+	outdata << "m1/m2" << "\t" << m1Overm2 << "\t" << "l1/l2" << "\t" << l1Overl2 << std::endl;
+
+	double halfOffset = 0.5 / (double) gridSize;
+
+	for (int b = 0; b < gridSize; b++) {
+		for (int a = 0; a < gridSize; a++) {
+			double alpha = 6.28318530718 * (((double)a / (double)gridSize) + halfOffset) - 3.14159265359;
+			double beta = 6.28318530718 * (((double)(gridSize - 1 - b) / (double)gridSize) + halfOffset) - 3.14159265359;
+			Vec4 refStart(alpha, beta, 0, 0);
+			double generatedValue = l.generate(refStart, deltaError, D, N, dt, ic);
+			outdata << generatedValue << "\t";
+		}
+		outdata << std::endl;
+	}
+
+	outdata << std::endl;
+	outdata.close();
+}
+void generateLyapunovGrids() {
+	std::cout << "Ouput files will be created in 'outdata' directory." << std::endl;
+	std::cout << "Remember to turn off the screen saver." << std::endl;
+
+	int minSpan;
+	std::cout << "minSpan: ";
+	std::cin >> minSpan;
+	int maxSpan;
+	std::cout << "maxSpan: ";
+	std::cin >> maxSpan;
+
+	int iteratorStart;
+	std::cout << "iteratorStart: ";
+	std::cin >> iteratorStart;
+	int iteratorEnd;
+	std::cout << "iteratorEnd: ";
+	std::cin >> iteratorEnd;
+
+	int gridSize;
+	std::cout << "grid size: ";
+	std::cin >> gridSize;
+
+	const int MAX_THREADS = std::thread::hardware_concurrency();
+	std::cout << "thread count: " << MAX_THREADS << std::endl;
+	std::vector<std::thread*> threadObjs;
+
+	std::cout << "running: { " << iteratorStart << " <= iterator < " << iteratorEnd << " }" << std::endl;
+
+	for (int iterator = iteratorStart; iterator < iteratorEnd; iterator++) {
+		int k = (iterator / ((maxSpan - minSpan) + 1)) + minSpan;
+		int i = (iterator % ((maxSpan - minSpan) + 1)) + minSpan;
+
+		if (threadObjs.size() == MAX_THREADS) {
+			for (int a = 0; a < threadObjs.size(); a++) {
+				threadObjs[a]->join();
+				delete threadObjs[a];
+			}
+			threadObjs.clear();
+		}
+		threadObjs.push_back(new std::thread(lyaFile, i, k, gridSize));
+	}
+
+	for (int a = 0; a < threadObjs.size(); a++) {
+		threadObjs[a]->join();
+		delete threadObjs[a];
+	}
+	threadObjs.clear();
+
+	std::cout << "Lyapunov grids generated." << std::endl;
+}
+
 void consoleApplication() {
 	std::string user_input = askUser("Write the corresponding number and hit Enter\n" \
 		"1 : Simulate pendulum(light mode)\n" \
@@ -765,11 +861,10 @@ void consoleApplication() {
 		"3 : Generate flip-fractal graph\n" \
 		"4 : Generate flip-fractal coastline\n" \
 		"5 : Calculate compass and box dimention\n" \
-		"6 : Generate Lyaponov graph\n" \
-		"7 : Calculate Lyaponov\n" \
-		"8 : Draw Mandelbrot-set\n"\
-		"9 : Draw Mandelbrot-set coastline\n"\
-		"10 : Calculate Mandelbrot-set dimension\n"\
+		"6 : Generate Lyaponov grids\n" \
+		"7 : Draw Mandelbrot-set\n"\
+		"8 : Draw Mandelbrot-set coastline\n"\
+		"9 : Calculate Mandelbrot-set dimension\n"\
 	);
 	while (true) {
 		if (user_input == "1") {
@@ -793,22 +888,18 @@ void consoleApplication() {
 			return;
 		}
 		else if (user_input == "6") {
-			std::cout << "Not implemented yet" << std::endl;
+			generateLyapunovGrids();
 			return;
 		}
 		else if (user_input == "7") {
-			std::cout << "Not implemented yet" << std::endl;
-			return;
-		}
-		else if (user_input == "8") {
 			drawMandelbrot();
 			return;
 		}
-		else if (user_input == "9") {
+		else if (user_input == "8") {
 			drawMandelbrotEdge();
 			return;
 		}
-		else if (user_input == "10") {
+		else if (user_input == "9") {
 			calculateMandelbrotDimension();
 			return;
 		}
@@ -852,82 +943,6 @@ int wmain() {
 		std::cout << "\n\n\n\n\n\n\n\n\n";
 	}
 	return 0;
-}
-
-
-#include "../simulator/openGL/GpuInterface.h"
-#include "../simulator/Fractal.h"
-#include "../simulator/Lyapunov.h"
-#include "../simulator/Vec4.h"
-#include "../simulator/openGL/FractalSection.h"
-#include "../simulator/openGL/Shader.h"
-
-#include <iostream>
-#include <fstream>
-#include <math.h>
-#include <string>
-#include <algorithm>
-#include <chrono>
-#include <vector>
-#include <limits>
-#include <math.h>
-#include <thread>
-#include <mutex>
-#include <future>
-
-double dsin(double x) {
-	double res = 0, pow = x, fact = 1;
-	for (int i = 0; i < 15; i++) {
-		res += pow / fact;
-		pow *= -1 * x * x;
-		fact *= (2 * (i + 1)) * (2 * (i + 1) + 1);
-	}
-	return res;
-}
-double dcos(double x) {
-	double res = 0, pow = 1, fact = 1;
-	for (int i = 0; i < 15; i++) {
-		res += pow / fact;
-		pow *= -1 * x * x;
-		fact *= (2 * (i + 1)) * (2 * (i + 1) - 1);
-	}
-	return res;
-}
-
-void lyaFile(int i, int k, int gridSize) {
-	Lyapunov l;
-
-	Vec4 deltaError(0.0000001, 0, 0, 0);
-	PREDEC D = 0.0001;
-	int N = 100;
-	PREDEC dt = 0.001;
-
-	typedef std::numeric_limits< double > dbl;
-
-	double m1Overm2 = pow(sqrt(2), i);
-	double l1Overl2 = pow(sqrt(2), k);
-
-	std::ofstream outdata;
-	outdata.precision(dbl::max_digits10);
-	std::string filename = "outdata/outdata_" + std::to_string(m1Overm2) + "_" + std::to_string(l1Overl2) + ".txt";
-	outdata.open(filename);
-
-	//std::cout << "m: " << m1Overm2 << " | l: " << l1Overl2 << std::endl;
-
-	FractalData::InitialCondition ic = { m1Overm2, 1, l1Overl2, 1, 9.82 };
-
-	outdata << "m1/m2" << "\t" << m1Overm2 << "\t" << "l1/l2" << "\t" << l1Overl2 << std::endl;
-
-	for (int b = 0; b < gridSize; b++) {
-		for (int a = 0; a < gridSize; a++) {
-			Vec4 refStart(6.28318530718 * ((double)a / (double)gridSize) - 3.14159265359, 6.28318530718 * ((double)(gridSize - 1 - b) / (double)gridSize) - 3.14159265359, 0, 0);
-			outdata << l.generate(refStart, deltaError, D, N, dt, ic) << "\t";
-		}
-		outdata << std::endl;
-	}
-
-	outdata << std::endl;
-	outdata.close();
 }
 
 void setPixel(SDL_Surface* surface, int x, int y, Uint32 pixel)
