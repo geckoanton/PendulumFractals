@@ -294,12 +294,7 @@ struct CompassInfo {
 	int compass_count;
 };
 
-void Fractal::getCompassDimension(PrintOutput& print_output) {
-	CompassStruct compass_info;
-
-	// Array to store where the compass has been
-	Array2D<char> flip_array = Array2D<char>(resolution, resolution);
-
+void Fractal::getCompassStartPos(CompassStruct& compass_info) {
 	// Set the compass starting pos
 	bool start_left = (ic.l1 / ic.l2) > 1.0 / ((ic.m1 / ic.m2) + 1);
 	if (start_left) {
@@ -312,10 +307,19 @@ void Fractal::getCompassDimension(PrintOutput& print_output) {
 		compass_info.current_x = 0;
 		compass_info.current_y = resolution / 2;
 	}
-	compass_info.grid_height = resolution;
-	compass_info.grid_width = resolution;
+
+	compass_info.grid_height = getResolution();
+	compass_info.grid_width = getResolution();
 
 	compass_info.getNextPoint(this);
+}
+
+void Fractal::getCompassDimension(PrintOutput& print_output) {
+	// Array to store where the compass has been
+	Array2D<char> flip_array = Array2D<char>(resolution, resolution);
+
+	CompassStruct compass_info;
+	getCompassStartPos(compass_info);
 
 	int start_x = compass_info.current_x;
 	int start_y = compass_info.current_y;

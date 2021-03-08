@@ -15,6 +15,66 @@
 #include <chrono>
 #include <thread>
 
+class Mandelbrot : public Fractal {
+public:
+	Mandelbrot(int t_resolution) {
+		resolution = t_resolution;
+	}
+
+	int mandelbrot(double startReal, double startImag, int maximum) {
+		int counter = 0;
+		double zReal = startReal;
+		double zImag = startImag;
+		double nextRe;
+
+		while (pow(zReal, 2.0) + pow(zImag, 2.0) <= 4.0 && counter <= maximum) {
+			nextRe = pow(zReal, 2.0) - pow(zImag, 2.0) + startReal;
+			zImag = 2.0 * zReal * zImag + startImag;
+			zReal = nextRe;
+			if (zReal == startReal && zImag == startImag) { // A repetition indicates that the point is in the Mandelbrot set
+				// Inside Mandelbrot set
+				return -1;
+			}
+			counter += 1;
+		}
+
+		if (counter >= maximum) {
+			// Inside Mandelbrot set
+			return -1;
+		}
+		else {
+			// Returning the iteration count(can be used for coloring)
+			return counter;
+		}
+	}
+
+	// Returns true if inside Mandelbrot set
+	bool isInsideMandelbrot(int x, int y, int resolution, double offsetX = -0.7, double offsetY = 0.0, int MAX = 127) {
+		// Convert x and y to the appropriate complex number
+		double real = 3 * (x - (resolution / 2.0)) / resolution + offsetX;
+		double imag = 3 * (y - (resolution / 2.0)) / resolution + offsetY;
+		return (mandelbrot(real, imag, MAX) == -1);
+	}
+
+	unsigned char getChar(int x, int y) override {
+		return(!isInsideMandelbrot(x, y, resolution));
+	}
+
+	virtual void getCompassStartPos(CompassStruct& compass_info) override {
+		compass_info.grid_height = getResolution();
+		compass_info.grid_width = getResolution();
+		compass_info.current_x = resolution;
+		compass_info.current_y = resolution / 2;
+
+		while (getChar(compass_info.current_x, compass_info.current_y)) {
+			compass_info.current_x--;
+		}
+
+		compass_info.direction = compass_info.POINTING_BOTTOM;
+
+		compass_info.getNextPoint(this);
+	}
+};
 
 void drawFractalEdge(Fractal& fractal) {
 	// Create a window
@@ -33,22 +93,7 @@ void drawFractalEdge(Fractal& fractal) {
 
 	CompassStruct compass_info;
 
-	// Set the compass starting pos
-	bool start_left = (ic.l1 / ic.l2) > 1.0 / ((ic.m1 / ic.m2) + 1);
-	if (start_left) {
-		// Start on the left side of the fractal
-		compass_info.current_x = fractal.getResolution() / 2;
-		compass_info.current_y = 0;
-	}
-	else {
-		// Start at the top of the fractal
-		compass_info.current_x = 0;
-		compass_info.current_y = fractal.getResolution() / 2;
-	}
-	compass_info.grid_height = fractal.getResolution();
-	compass_info.grid_width = fractal.getResolution();
-
-	compass_info.getNextPoint(&fractal);
+	fractal.getCompassStartPos(compass_info);
 
 	int start_x = compass_info.current_x;
 	int start_y = compass_info.current_y;
@@ -133,14 +178,15 @@ void drawFractal(Fractal& fractal) {
 	DisplayWindow::fill(110, 160, 255, 255);
 
 	// Iterate through the fracal
-	for (int x = 0; x < fractal.getResolution() / 2; x++) {
+	//for (int x = 0; x < fractal.getResolution() / 2; x++) {
+	for (int x = 0; x < fractal.getResolution(); x++) {
 		// Set render target(where it will draw) to the texture
 		DisplayWindow::setRenderTarget(texture);
 		for (int y = 0; y < fractal.getResolution(); y++) {
 			if (fractal.getChar(x, y) == 0) {
 				// Draw a black square if it does not flip
 				DisplayWindow::drawRectangle(x, fractal.getResolution() - y - 1, 1, 1, 0, 0, 0, 255);
-				DisplayWindow::drawRectangle(fractal.getResolution() - x - 1, y, 1, 1, 0, 0, 0, 255);
+				//DisplayWindow::drawRectangle(fractal.getResolution() - x - 1, y, 1, 1, 0, 0, 0, 255);
 			}
 			/*else if (fractal.getChar(x, y) == 254) {
 				//DisplayWindow::drawRectangle(x, fractal.getResolution() - y - 1, 1, 1, 0, 255, 255, 255);
@@ -149,7 +195,7 @@ void drawFractal(Fractal& fractal) {
 			else {
 				// Draw a white square if it flips
 				DisplayWindow::drawRectangle(x, fractal.getResolution() - y - 1, 1, 1, 255, 255, 255, 255);
-				DisplayWindow::drawRectangle(fractal.getResolution() - x - 1, y, 1, 1, 255, 255, 255, 255);
+				//DisplayWindow::drawRectangle(fractal.getResolution() - x - 1, y, 1, 1, 255, 255, 255, 255);
 			}
 		}
 		// Set render target(where it will draw) to the window
@@ -177,6 +223,11 @@ void drawFractal(Fractal& fractal) {
 
 	// Save the texture to file
 	DisplayWindow::saveTextureToFile(filename.c_str(), texture);
+
+	// Run until the window is closed by user
+	while (DisplayWindow::isRunning()) {
+		DisplayWindow::update();
+	}
 
 	DisplayWindow::setRenderTarget(nullptr);
 	DisplayWindow::destroyTexture(texture);
@@ -644,6 +695,24 @@ void setupCompassAndBoxDimentionCalculation() {
 	}
 }
 
+void drawMandelbrot() {
+	int resolution = stoi(askUser("Resolution: "));
+	Mandelbrot mandelbrot = Mandelbrot(resolution);
+	drawFractal(mandelbrot);
+}
+
+void drawMandelbrotEdge() {
+	int resolution = stoi(askUser("Resolution: "));
+	Mandelbrot mandelbrot = Mandelbrot(resolution);
+	drawFractalEdge(mandelbrot);
+}
+
+void calculateMandelbrotDimension() {
+	int resolution = stoi(askUser("Resolution: "));
+	Mandelbrot mandelbrot = Mandelbrot(resolution);
+	calculateCompassAndBoxDimention(mandelbrot);
+}
+
 void consoleApplication() {
 	std::string user_input = askUser("Write the corresponding number and hit Enter\n" \
 		"1 : Simulate pendulum(light mode)\n" \
@@ -652,7 +721,10 @@ void consoleApplication() {
 		"4 : Generate flip-fractal coastline\n" \
 		"5 : Calculate compass and box dimention\n" \
 		"6 : Generate Lyaponov graph\n" \
-		"7 : Calculate Lyaponov\n"
+		"7 : Calculate Lyaponov\n" \
+		"8 : Draw Mandelbrot-set\n"\
+		"9 : Draw Mandelbrot-set coastline\n"\
+		"10 : Calculate Mandelbrot-set dimension\n"\
 	);
 	while (true) {
 		if (user_input == "1") {
@@ -681,6 +753,18 @@ void consoleApplication() {
 		}
 		else if (user_input == "7") {
 			std::cout << "Not implemented yet" << std::endl;
+			return;
+		}
+		else if (user_input == "8") {
+			drawMandelbrot();
+			return;
+		}
+		else if (user_input == "9") {
+			drawMandelbrotEdge();
+			return;
+		}
+		else if (user_input == "10") {
+			calculateMandelbrotDimension();
 			return;
 		}
 		else {
@@ -717,6 +801,7 @@ int wmain() {
 
 		calculateCompassAndBoxDimention(box_count_fractal);
 	}*/
+	//drawMandelbrot();
 	while (true) {
 		consoleApplication();
 		std::cout << "\n\n\n\n\n\n\n\n\n";

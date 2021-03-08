@@ -14,6 +14,7 @@
 #include <fstream>
 
 class FractalSection;
+struct CompassStruct;
 
 namespace FractalData {
 	enum Type {
@@ -37,6 +38,7 @@ public:
 	Fractal(int resolution, int shaderType, FractalData::InitialCondition ic);
 
 	unsigned long long countBoxes();
+	virtual void getCompassStartPos(CompassStruct& compass_info);
 	void getCompassDimension(PrintOutput& print_output);
 
 	int iteration_count = 1000;
@@ -46,7 +48,7 @@ public:
 	FractalData::InitialCondition getIc() { return ic; }
 
 	unsigned char getBatchChar(int x, int y);
-	unsigned char getChar(int x, int y);
+	virtual unsigned char getChar(int x, int y);
 private:
 	void loadCurrentSection(int xIn, int yIn, unsigned char* generate);
 	void shiftCurretSections(int shiftX, int shiftY);
@@ -56,13 +58,15 @@ private:
 
 	const int CURRENT_SECTIONS_SIDE = 5;
 	FractalSection** currentSections;
-
-	int resolution, resolutionSectionCount, shaderType;
 	int currentCornerX = 0, currentCornerY = 0;
 
 	FractalData::InitialCondition ic;
 
 	friend struct CompassStruct;
+protected:
+	int resolution, resolutionSectionCount, shaderType;
+
+	Fractal() {}
 };
 
 struct BorderArea {
