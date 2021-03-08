@@ -696,19 +696,64 @@ void setupCompassAndBoxDimentionCalculation() {
 }
 
 void drawMandelbrot() {
-	int resolution = stoi(askUser("Resolution: "));
+	std::string user_input = askUser(
+		"Write the corresponding number and hit Enter: \n" \
+		"1: use Default(resolution = 1024)\n" \
+		"2: custom parameters\n" \
+	);
+	int resolution;
+	if (user_input == "1") {
+		resolution = 1024;
+	}
+	else if(user_input == "2")
+	{
+		resolution = stoi(askUser("Resolution: "));
+	}
+	else {
+		return;
+	}
 	Mandelbrot mandelbrot = Mandelbrot(resolution);
 	drawFractal(mandelbrot);
 }
 
 void drawMandelbrotEdge() {
-	int resolution = stoi(askUser("Resolution: "));
+	std::string user_input = askUser(
+		"Write the corresponding number and hit Enter: \n" \
+		"1: use Default(resolution = 1024)\n" \
+		"2: custom parameters\n" \
+	);
+	int resolution;
+	if (user_input == "1") {
+		resolution = 1024;
+	}
+	else if (user_input == "2")
+	{
+		resolution = stoi(askUser("Resolution: "));
+	}
+	else {
+		return;
+	}
 	Mandelbrot mandelbrot = Mandelbrot(resolution);
 	drawFractalEdge(mandelbrot);
 }
 
 void calculateMandelbrotDimension() {
-	int resolution = stoi(askUser("Resolution: "));
+	std::string user_input = askUser(
+		"Write the corresponding number and hit Enter: \n" \
+		"1: use Default(resolution = 1024)\n" \
+		"2: custom parameters\n" \
+	);
+	int resolution;
+	if (user_input == "1") {
+		resolution = 1024;
+	}
+	else if (user_input == "2")
+	{
+		resolution = stoi(askUser("Resolution: "));
+	}
+	else {
+		return;
+	}
 	Mandelbrot mandelbrot = Mandelbrot(resolution);
 	calculateCompassAndBoxDimention(mandelbrot);
 }
