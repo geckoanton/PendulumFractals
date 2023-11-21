@@ -18,7 +18,7 @@ This hypothesis was tested by comparing fractal dimension against the *Maximum L
 
 Our results showed that a slight correlation between the coputed fractal dimensions and the MLE existed, but seeing as the data had a very large spread, it was hard to draw any definitive conclusions as to whether this behaviour would be expected in other systems as well.
 
-The full report (in swedish) is found at (Rapport/Rapport.pdf)[Rapport/Rapport.pdf]
+The full report (in swedish) is found at [Rapport/Rapport.pdf](Rapport/Rapport.pdf).
 
 # Comments on implementation
 
